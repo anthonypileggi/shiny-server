@@ -16,19 +16,32 @@ shinyUI(
   navbarPage("Greenkeeper",
   
   tabPanel("Login Credentials",
-    sidebarLayout(
-      sidebarPanel(
+    fluidPage(
         textInput("username", "Username:", ""),
         textInput("password", "Password:", ""),
-        textInput("host", "Host:", "")
-      ),
-      mainPanel()
+        textInput("host", "Host:", ""),
+        actionButton("connect", "Connect"),
+        textOutput("status_inventory"),
+        textOutput("status_consumption")
     )
   ),
   
-  tabPanel("Consumption"),
+  tabPanel("Consume",
+     sidebarLayout(
+       
+       sidebarPanel(
+         selectInput("item", "Item:", list()),
+         numericInput("amount", "Amount", ""),
+         actionButton("consume", "Consume")
+       ),
+       
+       mainPanel(
+         DT::dataTableOutput("consumption")
+       )
+     )
+   ),
 
-  tabPanel("Inventory",
+  tabPanel("Inventory Manager",
     sidebarLayout(
     
       # Sidebar with a slider input
@@ -41,14 +54,21 @@ shinyUI(
                       "Wax" = "wax")),
         numericInput("quantity", "Quantity", ""),
         numericInput("cost", "Cost", ""),
-        actionButton("submit", "Submit")
+        div(
+          actionButton("submit", "Submit"),
+          span(textOutput("stash_value"), style = "color:blue")
+        )
       ),
     
       # Show a plot of the generated distribution
       mainPanel(
-        plotOutput("inventory_plot"),
         DT::dataTableOutput("inventory")
       )
     )
-  )
+  ),
+  
+  tabPanel("Inventory History",
+    fluidPage(
+      plotOutput("inventory_plot")
+    ))
 ))
